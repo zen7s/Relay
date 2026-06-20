@@ -42,6 +42,14 @@ export async function completeOnboardingAction(
   }
 
   const supabase = await createServerSupabaseClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/login");
+  }
+
   const { error } = await supabase.rpc("complete_onboarding", {
     profile_display_name: result.data.displayName,
     requested_workspace_name: result.data.workspaceName,

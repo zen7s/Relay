@@ -28,6 +28,13 @@ test("completes signup, email confirmation, onboarding, and password recovery", 
     page.getByRole("heading", { name: "Create your first workspace" }),
   ).toBeVisible();
 
+  await page.getByRole("button", { name: "Use another account" }).click();
+  await expect(page).toHaveURL("/login");
+  await page.getByLabel("Email").fill(email);
+  await page.getByLabel("Password", { exact: true }).fill(originalPassword);
+  await page.getByRole("button", { name: "Sign in" }).click();
+  await expect(page).toHaveURL("/onboarding");
+
   await page.getByLabel("Your name").fill("Taylor Reed");
   await page.getByLabel("Workspace name").fill("Taylor Studio");
   await page.getByRole("button", { name: "Create workspace" }).click();
@@ -63,4 +70,8 @@ test("completes signup, email confirmation, onboarding, and password recovery", 
   await page.getByLabel("Password", { exact: true }).fill(newPassword);
   await page.getByRole("button", { name: "Sign in" }).click();
   await expect(page).toHaveURL("/");
+
+  await page.getByRole("button", { name: "Open account menu" }).last().click();
+  await page.getByRole("menuitem", { name: "Sign out" }).click();
+  await expect(page).toHaveURL("/login");
 });

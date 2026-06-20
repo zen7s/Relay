@@ -227,3 +227,11 @@ export async function resetPasswordAction(
   revalidatePath("/", "layout");
   redirect("/");
 }
+
+export async function signOutAction() {
+  const supabase = await createServerSupabaseClient();
+
+  await supabase.auth.signOut({ scope: "local" });
+  revalidatePath("/", "layout");
+  redirect("/login");
+}

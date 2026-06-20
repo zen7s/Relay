@@ -1,8 +1,10 @@
 "use client";
 
+import { useTransition } from "react";
 import { LogOut, Settings, UserRound } from "lucide-react";
 import { toast } from "sonner";
 
+import { signOutAction } from "@/features/auth";
 import {
   Avatar,
   AvatarFallback,
@@ -37,6 +39,7 @@ export function AccountMenu({
   displayName,
   email,
 }: AccountMenuProps) {
+  const [isSigningOut, startSignOutTransition] = useTransition();
   const initials = getInitials(displayName);
 
   return (
@@ -85,9 +88,18 @@ export function AccountMenu({
           Settings
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem variant="destructive" disabled>
+        <DropdownMenuItem
+          variant="destructive"
+          disabled={isSigningOut}
+          onSelect={(event) => {
+            event.preventDefault();
+            startSignOutTransition(async () => {
+              await signOutAction();
+            });
+          }}
+        >
           <LogOut />
-          Sign out
+          {isSigningOut ? "Signing out…" : "Sign out"}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

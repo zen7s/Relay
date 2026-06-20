@@ -47,11 +47,12 @@ export async function updateSupabaseSession(request: NextRequest) {
     },
   });
 
-  const { data } = await supabase.auth.getClaims();
-  const claims = data?.claims;
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   const pathname = request.nextUrl.pathname;
-  const isAuthenticated = typeof claims?.sub === "string";
+  const isAuthenticated = Boolean(user);
 
   if (!isAuthenticated && isProtectedPath(pathname)) {
     const loginUrl = request.nextUrl.clone();

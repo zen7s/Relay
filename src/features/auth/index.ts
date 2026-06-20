@@ -2,6 +2,7 @@ export {
   forgotPasswordAction,
   resetPasswordAction,
   signInAction,
+  signOutAction,
   signUpAction,
 } from "./api/actions";
 export {
