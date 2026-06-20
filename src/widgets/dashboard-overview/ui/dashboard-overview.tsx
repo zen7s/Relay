@@ -187,17 +187,27 @@ function ProjectCard({ project }: { project: (typeof projects)[number] }) {
   );
 }
 
-export function DashboardOverview() {
+type DashboardOverviewProps = {
+  displayName: string;
+  workspaceName: string;
+};
+
+export function DashboardOverview({
+  displayName,
+  workspaceName,
+}: DashboardOverviewProps) {
+  const firstName = displayName.split(/\s+/)[0] || displayName;
+
   return (
     <div className="mx-auto w-full max-w-[1440px]">
       <section className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
         <div>
           <p className="text-sm font-medium text-primary">Sunday, June 21</p>
           <h1 className="mt-1 text-2xl font-semibold tracking-tight sm:text-3xl">
-            Good morning, Alex
+            Good morning, {firstName}
           </h1>
           <p className="mt-2 text-sm text-muted-foreground sm:text-base">
-            Here’s what’s moving across Northstar Studio today.
+            Here’s what’s moving across {workspaceName} today.
           </p>
         </div>
         <CreateProjectButton className="self-start sm:self-auto" />

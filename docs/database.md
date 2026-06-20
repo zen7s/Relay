@@ -41,6 +41,7 @@ Owner transfer is intentionally reserved for a dedicated transactional server fl
 - Projects and tasks archive instead of exposing hard-delete operations.
 - Task assignees are constrained to members of the same workspace.
 - Task, label, comment, and attachment relationships use composite keys to prevent cross-project or cross-workspace references.
+- `complete_onboarding` validates the authenticated user and creates the profile update, first workspace, and Owner membership atomically. Repeated submissions return the existing workspace instead of creating duplicates.
 
 ## Verification
 

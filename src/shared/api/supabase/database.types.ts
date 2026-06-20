@@ -529,7 +529,16 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
-      [_ in never]: never;
+      complete_onboarding: {
+        Args: {
+          profile_display_name: string;
+          requested_workspace_name: string;
+        };
+        Returns: {
+          workspace_id: string;
+          workspace_slug: string;
+        }[];
+      };
     };
     Enums: {
       task_priority: "no_priority" | "low" | "medium" | "high" | "urgent";

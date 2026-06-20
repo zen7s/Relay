@@ -19,7 +19,15 @@ import {
   SheetTrigger,
 } from "@/shared/ui";
 
-export function MobileNavigationTrigger() {
+type MobileNavigationProps = {
+  user: { displayName: string; email: string };
+  workspace: { name: string; role: string };
+};
+
+export function MobileNavigationTrigger({
+  user,
+  workspace,
+}: MobileNavigationProps) {
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -46,7 +54,10 @@ export function MobileNavigationTrigger() {
         </div>
 
         <div className="p-4">
-          <WorkspaceSwitcher />
+          <WorkspaceSwitcher
+            workspaceName={workspace.name}
+            role={workspace.role}
+          />
         </div>
 
         <nav aria-label="Mobile primary" className="flex-1 space-y-1 px-3">
@@ -80,7 +91,7 @@ export function MobileNavigationTrigger() {
             </Link>
           </SheetClose>
           <ThemeSwitcher showLabel />
-          <AccountMenu showDetails />
+          <AccountMenu showDetails {...user} />
         </div>
       </SheetContent>
     </Sheet>

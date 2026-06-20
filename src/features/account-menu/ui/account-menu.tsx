@@ -17,9 +17,28 @@ import {
 
 type AccountMenuProps = {
   showDetails?: boolean;
+  displayName: string;
+  email: string;
 };
 
-export function AccountMenu({ showDetails = false }: AccountMenuProps) {
+function getInitials(displayName: string) {
+  return (
+    displayName
+      .split(/\s+/)
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((part) => part[0]?.toUpperCase())
+      .join("") || "R"
+  );
+}
+
+export function AccountMenu({
+  showDetails = false,
+  displayName,
+  email,
+}: AccountMenuProps) {
+  const initials = getInitials(displayName);
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -33,15 +52,15 @@ export function AccountMenu({ showDetails = false }: AccountMenuProps) {
           aria-label="Open account menu"
         >
           <Avatar className="size-8">
-            <AvatarFallback>AM</AvatarFallback>
+            <AvatarFallback>{initials}</AvatarFallback>
           </Avatar>
           {showDetails ? (
             <span className="min-w-0 text-left">
               <span className="block truncate text-sm font-medium">
-                Alex Morgan
+                {displayName}
               </span>
               <span className="block truncate text-xs font-normal text-muted-foreground">
-                alex@relay.team
+                {email}
               </span>
             </span>
           ) : null}
@@ -49,8 +68,8 @@ export function AccountMenu({ showDetails = false }: AccountMenuProps) {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuLabel>
-          <span className="block text-sm text-foreground">Alex Morgan</span>
-          <span className="font-normal">alex@relay.team</span>
+          <span className="block text-sm text-foreground">{displayName}</span>
+          <span className="font-normal">{email}</span>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem

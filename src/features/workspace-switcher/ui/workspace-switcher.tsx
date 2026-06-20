@@ -15,11 +15,15 @@ import {
 
 type WorkspaceSwitcherProps = {
   compact?: boolean;
+  workspaceName: string;
+  role: string;
 };
 
-const workspaces = ["Northstar Studio", "Relay Labs"];
-
-export function WorkspaceSwitcher({ compact = false }: WorkspaceSwitcherProps) {
+export function WorkspaceSwitcher({
+  compact = false,
+  workspaceName,
+  role,
+}: WorkspaceSwitcherProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -40,10 +44,10 @@ export function WorkspaceSwitcher({ compact = false }: WorkspaceSwitcherProps) {
             <>
               <span className="min-w-0 flex-1 text-left">
                 <span className="block truncate text-sm font-medium">
-                  Northstar Studio
+                  {workspaceName}
                 </span>
                 <span className="block truncate text-[11px] font-normal text-muted-foreground">
-                  8 members
+                  {role}
                 </span>
               </span>
               <ChevronsUpDown className="size-4 text-muted-foreground" />
@@ -57,16 +61,11 @@ export function WorkspaceSwitcher({ compact = false }: WorkspaceSwitcherProps) {
         className="w-60"
       >
         <DropdownMenuLabel>Workspaces</DropdownMenuLabel>
-        {workspaces.map((workspace, index) => (
-          <DropdownMenuItem
-            key={workspace}
-            onSelect={() => toast.info(`${workspace} selected`)}
-          >
-            <Building2 />
-            {workspace}
-            {index === 0 ? <Check className="ml-auto" /> : null}
-          </DropdownMenuItem>
-        ))}
+        <DropdownMenuItem>
+          <Building2 />
+          {workspaceName}
+          <Check className="ml-auto" />
+        </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem
           onSelect={() => toast.info("Workspace creation comes next")}

@@ -33,6 +33,7 @@ export {
 export { EmptyState, type EmptyStateProps } from "./empty-state";
 export { ErrorState, type ErrorStateProps } from "./error-state";
 export { Input } from "./input";
+export { Label } from "./label";
 export { RelayLogo } from "./relay-logo";
 export {
   Sheet,

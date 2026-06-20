@@ -7,7 +7,12 @@ import { primaryNavigation } from "@/shared/config/navigation";
 import { cn } from "@/shared/lib";
 import { RelayLogo } from "@/shared/ui";
 
-export function AppSidebar() {
+type AppSidebarProps = {
+  user: { displayName: string; email: string };
+  workspace: { name: string; role: string };
+};
+
+export function AppSidebar({ user, workspace }: AppSidebarProps) {
   return (
     <aside className="fixed inset-y-0 left-0 z-40 hidden w-18 flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground md:flex xl:w-64">
       <div className="flex h-16 shrink-0 items-center justify-center border-b border-sidebar-border px-3 xl:justify-start xl:px-5">
@@ -16,10 +21,17 @@ export function AppSidebar() {
       </div>
 
       <div className="flex justify-center p-3 xl:hidden">
-        <WorkspaceSwitcher compact />
+        <WorkspaceSwitcher
+          compact
+          workspaceName={workspace.name}
+          role={workspace.role}
+        />
       </div>
       <div className="hidden p-3 xl:block">
-        <WorkspaceSwitcher />
+        <WorkspaceSwitcher
+          workspaceName={workspace.name}
+          role={workspace.role}
+        />
       </div>
 
       <nav aria-label="Primary" className="flex-1 space-y-1 px-2.5 py-2">
@@ -60,10 +72,10 @@ export function AppSidebar() {
           <span className="hidden xl:inline">Settings</span>
         </Link>
         <div className="hidden pt-1 xl:block">
-          <AccountMenu showDetails />
+          <AccountMenu showDetails {...user} />
         </div>
         <div className="flex justify-center pt-1 xl:hidden">
-          <AccountMenu />
+          <AccountMenu {...user} />
         </div>
       </div>
     </aside>

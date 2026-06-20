@@ -1,5 +1,7 @@
 import { expect, test, type Page } from "@playwright/test";
 
+import { signInSeededUser } from "./support/auth";
+
 async function expectNoHorizontalOverflow(page: Page) {
   await expect
     .poll(() =>
@@ -11,7 +13,7 @@ async function expectNoHorizontalOverflow(page: Page) {
 }
 
 test("renders the responsive dashboard shell", async ({ page }) => {
-  await page.goto("/");
+  await signInSeededUser(page);
 
   await expect(page).toHaveTitle("Relay");
   await expect(
@@ -26,7 +28,7 @@ test("renders the responsive dashboard shell", async ({ page }) => {
 });
 
 test("changes and persists the selected theme", async ({ page }) => {
-  await page.goto("/");
+  await signInSeededUser(page);
 
   await page.getByRole("button", { name: "Choose theme" }).click();
   await page.getByRole("menuitem", { name: "Dark" }).click();
@@ -38,7 +40,7 @@ test("changes and persists the selected theme", async ({ page }) => {
 
 test("uses compact desktop navigation at tablet width", async ({ page }) => {
   await page.setViewportSize({ width: 900, height: 900 });
-  await page.goto("/");
+  await signInSeededUser(page);
 
   await expect(page.getByRole("navigation", { name: "Primary" })).toBeVisible();
   await expect(
@@ -52,7 +54,7 @@ test("uses compact desktop navigation at tablet width", async ({ page }) => {
 
 test("opens the navigation drawer on mobile", async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 780 });
-  await page.goto("/");
+  await signInSeededUser(page);
 
   await expect(page.getByRole("navigation", { name: "Primary" })).toBeHidden();
   await expect(
@@ -64,4 +66,13 @@ test("opens the navigation drawer on mobile", async ({ page }) => {
     page.getByRole("navigation", { name: "Mobile primary" }),
   ).toBeVisible();
   await expectNoHorizontalOverflow(page);
+});
+
+test("redirects anonymous users to sign in", async ({ page }) => {
+  await page.goto("/");
+
+  await expect(page).toHaveURL(/\/login\?next=%2F$/);
+  await expect(
+    page.getByRole("heading", { name: "Sign in to Relay" }),
+  ).toBeVisible();
 });

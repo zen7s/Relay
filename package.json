@@ -31,6 +31,8 @@
     "db:verify": "pnpm db:reset && pnpm db:lint && pnpm db:test && pnpm db:types:check"
   },
   "dependencies": {
+    "@supabase/ssr": "^0.12.0",
+    "@supabase/supabase-js": "^2.108.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^1.21.0",

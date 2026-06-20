@@ -4,7 +4,7 @@ Relay is an English-language project management SaaS for small product and creat
 
 ## Current state
 
-Stages 1–3 are complete: the application foundation and workspace-isolated Supabase schema are paired with a responsive application shell, theme-aware design tokens, accessible UI primitives, and tested desktop, tablet, and mobile layouts.
+Stages 1–4 are implemented: the responsive application shell and workspace-isolated database now include cookie-backed Supabase SSR authentication, email confirmation and recovery, Google OAuth integration, protected routes, generated profiles, and atomic first-workspace onboarding.
 
 ## Requirements
 
@@ -12,25 +12,21 @@ Stages 1–3 are complete: the application foundation and workspace-isolated Sup
 - pnpm 11.8.0
 - Docker Desktop or another Docker-compatible runtime for local Supabase
 
-No hosted service accounts are required for the initialization stage.
+Email authentication runs entirely against local Supabase. The template values keep the local stack bootable, while a real Google Cloud OAuth client is required for Google sign-in.
 
 ## Getting started
 
 ```bash
 pnpm install
-cp .env.example .env.local
+cp .env.example .env
+pnpm db:start
+# Copy the printed Project URL and Publishable key into .env
 pnpm dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000).
 
-Start the local Supabase stack when database work begins:
-
-```bash
-pnpm db:start
-```
-
-The command requires Docker and prints the local URL and development keys. Copy the public values into `.env.local`. The unused Edge Runtime container is excluded; Auth, REST, Realtime, Storage, and Studio remain available.
+The Supabase command requires Docker and prints the local URL and development keys. The unused Edge Runtime container is excluded; Auth, REST, Realtime, Storage, and Studio remain available. Confirmation and recovery emails are captured by Mailpit at [http://127.0.0.1:54324](http://127.0.0.1:54324).
 
 Apply all migrations, seed data, and database verification gates:
 
@@ -38,7 +34,7 @@ Apply all migrations, seed data, and database verification gates:
 pnpm db:verify
 ```
 
-Supabase Studio is available at [http://localhost:54323](http://localhost:54323). The schema and role matrix are documented in [docs/database.md](docs/database.md).
+Supabase Studio is available at [http://127.0.0.1:54323](http://127.0.0.1:54323). See [database architecture](docs/database.md) and [authentication setup](docs/authentication.md), including the required Google callback URLs.
 
 ## Quality commands
 
@@ -48,7 +44,7 @@ pnpm lint          # ESLint and architectural boundaries
 pnpm typecheck     # strict TypeScript
 pnpm test          # unit and component tests
 pnpm build         # production build
-pnpm test:e2e      # browser smoke tests
+pnpm test:e2e      # browser auth and responsive tests; requires local Supabase
 pnpm check         # formatting, lint, types, and unit tests
 pnpm db:verify     # reset, lint, RLS tests, and generated-type check
 pnpm db:types      # regenerate TypeScript types after schema changes
@@ -90,6 +86,6 @@ Server Components are the default. Client Components are introduced only at inte
 
 ## Environment
 
-`.env.example` documents public variables. Environment parsing accepts a completely unconfigured local app, but rejects partial or malformed Supabase configuration. Service-role and other private keys must never use the `NEXT_PUBLIC_` prefix.
+`.env.example` documents public application values and local OAuth placeholders. Environment parsing rejects partial or malformed Supabase configuration. Google client secrets, service-role keys, and other private values must never use the `NEXT_PUBLIC_` prefix.
 
 The production UI is English-only. Project documentation may be written in English or Russian.
