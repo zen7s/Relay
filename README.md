@@ -4,7 +4,7 @@ Relay is an English-language project management SaaS for small product and creat
 
 ## Current state
 
-Stage 1 foundation is initialized with Next.js 16, React 19, TypeScript, Tailwind CSS, Supabase CLI, Vitest, Testing Library, Playwright, ESLint, Prettier, and Zod-based environment validation.
+Stages 1–2 are complete: the application foundation is paired with a migration-driven Supabase schema, generated TypeScript types, explicit grants, workspace-isolated RLS, and pgTAP security tests.
 
 ## Requirements
 
@@ -30,7 +30,15 @@ Start the local Supabase stack when database work begins:
 pnpm db:start
 ```
 
-The command requires Docker and prints the local URL and development keys. Copy the public values into `.env.local`.
+The command requires Docker and prints the local URL and development keys. Copy the public values into `.env.local`. The unused Edge Runtime container is excluded; Auth, REST, Realtime, Storage, and Studio remain available.
+
+Apply all migrations, seed data, and database verification gates:
+
+```bash
+pnpm db:verify
+```
+
+Supabase Studio is available at [http://localhost:54323](http://localhost:54323). The schema and role matrix are documented in [docs/database.md](docs/database.md).
 
 ## Quality commands
 
@@ -42,9 +50,11 @@ pnpm test          # unit and component tests
 pnpm build         # production build
 pnpm test:e2e      # browser smoke tests
 pnpm check         # formatting, lint, types, and unit tests
+pnpm db:verify     # reset, lint, RLS tests, and generated-type check
+pnpm db:types      # regenerate TypeScript types after schema changes
 ```
 
-GitHub Actions runs the same quality gates and a separate Playwright job.
+GitHub Actions runs the same quality gates, database security suite, and a separate Playwright job.
 
 ## Architecture
 
