@@ -1,0 +1,71 @@
+import Link from "next/link";
+import { HelpCircle, Settings } from "lucide-react";
+
+import { AccountMenu } from "@/features/account-menu";
+import { WorkspaceSwitcher } from "@/features/workspace-switcher";
+import { primaryNavigation } from "@/shared/config/navigation";
+import { cn } from "@/shared/lib";
+import { RelayLogo } from "@/shared/ui";
+
+export function AppSidebar() {
+  return (
+    <aside className="fixed inset-y-0 left-0 z-40 hidden w-18 flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground md:flex xl:w-64">
+      <div className="flex h-16 shrink-0 items-center justify-center border-b border-sidebar-border px-3 xl:justify-start xl:px-5">
+        <RelayLogo compact className="xl:hidden" />
+        <RelayLogo className="hidden xl:flex" />
+      </div>
+
+      <div className="flex justify-center p-3 xl:hidden">
+        <WorkspaceSwitcher compact />
+      </div>
+      <div className="hidden p-3 xl:block">
+        <WorkspaceSwitcher />
+      </div>
+
+      <nav aria-label="Primary" className="flex-1 space-y-1 px-2.5 py-2">
+        {primaryNavigation.map(({ label, href, icon: Icon, active }) => (
+          <Link
+            key={label}
+            href={href}
+            aria-current={active ? "page" : undefined}
+            title={label}
+            className={cn(
+              "flex h-10 items-center justify-center gap-3 rounded-lg px-3 text-sm font-medium transition-colors xl:justify-start",
+              active
+                ? "bg-sidebar-accent text-sidebar-accent-foreground"
+                : "text-muted-foreground hover:bg-sidebar-accent/70 hover:text-sidebar-foreground",
+            )}
+          >
+            <Icon className="size-[1.1rem] shrink-0" />
+            <span className="hidden xl:inline">{label}</span>
+          </Link>
+        ))}
+      </nav>
+
+      <div className="space-y-1 border-t border-sidebar-border p-2.5">
+        <Link
+          href="/help"
+          title="Help"
+          className="flex h-10 items-center justify-center gap-3 rounded-lg px-3 text-sm font-medium text-muted-foreground transition-colors hover:bg-sidebar-accent/70 hover:text-sidebar-foreground xl:justify-start"
+        >
+          <HelpCircle className="size-[1.1rem]" />
+          <span className="hidden xl:inline">Help & support</span>
+        </Link>
+        <Link
+          href="/settings"
+          title="Settings"
+          className="flex h-10 items-center justify-center gap-3 rounded-lg px-3 text-sm font-medium text-muted-foreground transition-colors hover:bg-sidebar-accent/70 hover:text-sidebar-foreground xl:justify-start"
+        >
+          <Settings className="size-[1.1rem]" />
+          <span className="hidden xl:inline">Settings</span>
+        </Link>
+        <div className="hidden pt-1 xl:block">
+          <AccountMenu showDetails />
+        </div>
+        <div className="flex justify-center pt-1 xl:hidden">
+          <AccountMenu />
+        </div>
+      </div>
+    </aside>
+  );
+}

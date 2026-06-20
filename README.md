@@ -4,7 +4,7 @@ Relay is an English-language project management SaaS for small product and creat
 
 ## Current state
 
-Stages 1–2 are complete: the application foundation is paired with a migration-driven Supabase schema, generated TypeScript types, explicit grants, workspace-isolated RLS, and pgTAP security tests.
+Stages 1–3 are complete: the application foundation and workspace-isolated Supabase schema are paired with a responsive application shell, theme-aware design tokens, accessible UI primitives, and tested desktop, tablet, and mobile layouts.
 
 ## Requirements
 
@@ -55,6 +55,20 @@ pnpm db:types      # regenerate TypeScript types after schema changes
 ```
 
 GitHub Actions runs the same quality gates, database security suite, and a separate Playwright job.
+
+## Design system
+
+Relay uses a graphite neutral palette with an indigo accent, Geist typography, Lucide icons, compact radii, and restrained shadows. Light, dark, and system themes are stored through `next-themes`; semantic colors live in `src/app/globals.css` as CSS variables.
+
+Reusable controls and content states live in `src/shared/ui`. The current set includes buttons, inputs, dialogs, dropdown menus, avatars, sheets, skeletons, badges, empty/error states, and Sonner toasts. `components.json` keeps future shadcn-compatible additions aligned with the same aliases and styling conventions.
+
+The application shell adapts at three levels:
+
+- Desktop: full sidebar, workspace switcher, search header, and account controls.
+- Tablet: compact icon navigation with the same content hierarchy.
+- Mobile: touch-friendly header, navigation drawer, and fixed quick navigation.
+
+The dashboard content is representative UI for this stage. Project and task behavior is connected in later roadmap stages.
 
 ## Architecture
 
