@@ -603,11 +603,7 @@ export function KanbanBoard({
             ))}
           </div>
         </div>
-        <DragOverlay
-          dropAnimation={
-            reducedMotion ? null : { duration: 180, easing: "ease-out" }
-          }
-        >
+        <DragOverlay dropAnimation={null}>
           {activeTask ? (
             <div
               data-testid="task-drag-overlay"

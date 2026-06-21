@@ -69,6 +69,7 @@ async function dragTaskToColumn(
     { steps: 16 },
   );
   await page.mouse.up();
+  await expect(overlay).toHaveCount(0, { timeout: 100 });
 }
 
 async function touchDragTaskToColumn(
