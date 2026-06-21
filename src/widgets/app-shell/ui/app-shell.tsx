@@ -4,7 +4,7 @@ import { MobileBottomNavigation } from "./mobile-navigation";
 
 type AppShellProps = Readonly<{
   children: React.ReactNode;
-  user: { displayName: string; email: string };
+  user: { displayName: string; email: string; avatarUrl: string | null };
   workspace: { name: string; slug: string; role: string };
   workspaces: Array<{ name: string; slug: string; role: string }>;
 }>;

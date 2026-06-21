@@ -14,7 +14,7 @@ import { cn } from "@/shared/lib";
 import { RelayLogo } from "@/shared/ui";
 
 type AppSidebarProps = {
-  user: { displayName: string; email: string };
+  user: { displayName: string; email: string; avatarUrl: string | null };
   workspace: { name: string; slug: string; role: string };
   workspaces: Array<{ name: string; slug: string; role: string }>;
 };
@@ -105,10 +105,10 @@ export function AppSidebar({ user, workspace, workspaces }: AppSidebarProps) {
           <span className="hidden xl:inline">Settings</span>
         </Link>
         <div className="hidden pt-1 xl:block">
-          <AccountMenu showDetails {...user} />
+          <AccountMenu showDetails {...user} workspaceSlug={workspace.slug} />
         </div>
         <div className="flex justify-center pt-1 xl:hidden">
-          <AccountMenu {...user} />
+          <AccountMenu {...user} workspaceSlug={workspace.slug} />
         </div>
       </div>
     </aside>

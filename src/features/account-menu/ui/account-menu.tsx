@@ -1,13 +1,14 @@
 "use client";
 
+import Link from "next/link";
 import { useTransition } from "react";
 import { LogOut, Settings, UserRound } from "lucide-react";
-import { toast } from "sonner";
 
 import { signOutAction } from "@/features/auth";
 import {
   Avatar,
   AvatarFallback,
+  AvatarImage,
   Button,
   DropdownMenu,
   DropdownMenuContent,
@@ -21,6 +22,8 @@ type AccountMenuProps = {
   showDetails?: boolean;
   displayName: string;
   email: string;
+  avatarUrl: string | null;
+  workspaceSlug: string;
 };
 
 function getInitials(displayName: string) {
@@ -38,6 +41,8 @@ export function AccountMenu({
   showDetails = false,
   displayName,
   email,
+  avatarUrl,
+  workspaceSlug,
 }: AccountMenuProps) {
   const [isSigningOut, startSignOutTransition] = useTransition();
   const initials = getInitials(displayName);
@@ -55,6 +60,7 @@ export function AccountMenu({
           aria-label="Open account menu"
         >
           <Avatar className="size-8">
+            {avatarUrl ? <AvatarImage src={avatarUrl} alt="" /> : null}
             <AvatarFallback>{initials}</AvatarFallback>
           </Avatar>
           {showDetails ? (
@@ -75,17 +81,17 @@ export function AccountMenu({
           <span className="font-normal">{email}</span>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem
-          onSelect={() => toast.info("Profile settings coming soon")}
-        >
-          <UserRound />
-          Profile
+        <DropdownMenuItem asChild>
+          <Link href={`/w/${workspaceSlug}/settings/profile`}>
+            <UserRound />
+            Personal settings
+          </Link>
         </DropdownMenuItem>
-        <DropdownMenuItem
-          onSelect={() => toast.info("Workspace settings coming soon")}
-        >
-          <Settings />
-          Settings
+        <DropdownMenuItem asChild>
+          <Link href={`/w/${workspaceSlug}/settings`}>
+            <Settings />
+            Workspace settings
+          </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem

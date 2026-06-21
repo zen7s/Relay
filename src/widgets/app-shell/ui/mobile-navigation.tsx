@@ -24,7 +24,7 @@ import {
 } from "@/shared/ui";
 
 type MobileNavigationProps = {
-  user: { displayName: string; email: string };
+  user: { displayName: string; email: string; avatarUrl: string | null };
   workspace: { name: string; slug: string; role: string };
   workspaces: Array<{ name: string; slug: string; role: string }>;
 };
@@ -122,7 +122,7 @@ export function MobileNavigationTrigger({
             </Link>
           </SheetClose>
           <ThemeSwitcher showLabel />
-          <AccountMenu showDetails {...user} />
+          <AccountMenu showDetails {...user} workspaceSlug={workspace.slug} />
         </div>
       </SheetContent>
     </Sheet>

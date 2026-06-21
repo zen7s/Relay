@@ -7,7 +7,7 @@ import { Input, RelayLogo } from "@/shared/ui";
 import { MobileNavigationTrigger } from "./mobile-navigation";
 
 type AppHeaderProps = {
-  user: { displayName: string; email: string };
+  user: { displayName: string; email: string; avatarUrl: string | null };
   workspace: { name: string; slug: string; role: string };
   workspaces: Array<{ name: string; slug: string; role: string }>;
 };
@@ -37,7 +37,7 @@ export function AppHeader({ user, workspace, workspaces }: AppHeaderProps) {
 
       <div className="ml-auto flex items-center gap-1 sm:gap-2">
         <ThemeSwitcher />
-        <AccountMenu {...user} />
+        <AccountMenu {...user} workspaceSlug={workspace.slug} />
       </div>
     </header>
   );

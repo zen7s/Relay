@@ -608,6 +608,14 @@ export type Database = {
         };
         Returns: string;
       };
+      get_account_deletion_blockers: {
+        Args: never;
+        Returns: {
+          workspace_id: string;
+          workspace_name: string;
+          workspace_slug: string;
+        }[];
+      };
       get_workspace_invitation: {
         Args: { invitation_token: string };
         Returns: {

@@ -4,7 +4,7 @@ Relay is an English-language project management SaaS for small product and creat
 
 ## Current state
 
-Stages 1–9 are implemented: the responsive application shell and workspace-isolated database now include complete authentication, multiple workspace URLs and switching, role-aware member management, secure email invitations, independent project boards, a Realtime Kanban workflow, URL-addressable task details, live comments, and private file collaboration.
+Stages 1–10 are implemented: the responsive application shell and workspace-isolated database now include complete authentication, multiple workspace URLs and switching, role-aware member management, secure email invitations, independent project boards, a Realtime Kanban workflow, URL-addressable task details, live comments, private file collaboration, and self-service account settings.
 
 ## Requirements
 
@@ -26,7 +26,7 @@ pnpm dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
-The Supabase command requires Docker and prints the local URL and development keys. The unused Edge Runtime container is excluded; Auth, REST, Realtime, Storage, and Studio remain available. Confirmation, recovery, and workspace invitation emails are captured by Mailpit at [http://127.0.0.1:54324](http://127.0.0.1:54324). Production invitations switch to Resend when its server-only API key and verified sender are configured.
+The Supabase command requires Docker and prints the local URL and development keys. The unused Edge Runtime container is excluded; Auth, REST, Realtime, Storage, and Studio remain available. Confirmation, recovery, and workspace invitation emails are captured by Mailpit at [http://127.0.0.1:54324](http://127.0.0.1:54324). Production invitations switch to Resend when its server-only API key and verified sender are configured. Production account deletion requires the server-only Supabase secret key; local development discovers the temporary key from the running CLI stack.
 
 Apply all migrations, seed data, and database verification gates:
 
@@ -34,7 +34,7 @@ Apply all migrations, seed data, and database verification gates:
 pnpm db:verify
 ```
 
-Supabase Studio is available at [http://127.0.0.1:54323](http://127.0.0.1:54323). See [database architecture](docs/database.md), [authentication setup](docs/authentication.md), [workspace/member operations](docs/workspaces.md), [project/board operations](docs/projects.md), [task/Kanban operations](docs/tasks.md), and [comments/attachment operations](docs/collaboration.md).
+Supabase Studio is available at [http://127.0.0.1:54323](http://127.0.0.1:54323). See [database architecture](docs/database.md), [authentication setup](docs/authentication.md), [workspace/member operations](docs/workspaces.md), [project/board operations](docs/projects.md), [task/Kanban operations](docs/tasks.md), [comments/attachment operations](docs/collaboration.md), and [account settings](docs/account-settings.md).
 
 ## Quality commands
 
@@ -67,6 +67,8 @@ The application shell adapts at three levels:
 The dashboard reports live project and task totals. Project boards support mouse, touch, and keyboard drag and drop, with an explicit move menu available as a fallback. Moves appear optimistically, roll back on failure, and reconcile with the server through Supabase Realtime.
 
 Task titles open a responsive details panel whose `task` query parameter preserves direct links and active board filters. The panel provides Realtime comments and private attachments with progress-aware uploads and short-lived signed downloads.
+
+Personal settings include display name and avatar management, device theme selection, verified password changes, local logout, and permanent account deletion. Deletion is blocked until ownership of every workspace has been transferred or the owned workspaces have been removed; this invariant is enforced in both the UI and database.
 
 ## Architecture
 
