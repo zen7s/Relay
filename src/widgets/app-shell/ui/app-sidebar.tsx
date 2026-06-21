@@ -6,7 +6,10 @@ import { HelpCircle, Settings } from "lucide-react";
 
 import { AccountMenu } from "@/features/account-menu";
 import { WorkspaceSwitcher } from "@/features/workspace-switcher";
-import { getPrimaryNavigation } from "@/shared/config/navigation";
+import {
+  getPrimaryNavigation,
+  isNavigationItemActive,
+} from "@/shared/config/navigation";
 import { cn } from "@/shared/lib";
 import { RelayLogo } from "@/shared/ui";
 
@@ -42,11 +45,9 @@ export function AppSidebar({ user, workspace, workspaces }: AppSidebarProps) {
       </div>
 
       <nav aria-label="Primary" className="flex-1 space-y-1 px-2.5 py-2">
-        {navigation.map(({ label, href, icon: Icon, disabled }) => {
-          const active =
-            pathname === href ||
-            (href !== `/w/${workspace.slug}` &&
-              pathname.startsWith(`${href}/`));
+        {navigation.map((item) => {
+          const { label, href, icon: Icon, disabled } = item;
+          const active = isNavigationItemActive(pathname, workspace.slug, item);
 
           const className = cn(
             "flex h-10 items-center justify-center gap-3 rounded-lg px-3 text-sm font-medium transition-colors xl:justify-start",

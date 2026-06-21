@@ -546,6 +546,23 @@ export type Database = {
           workspace_slug: string;
         }[];
       };
+      create_project: {
+        Args: {
+          project_color: string;
+          project_description: string;
+          project_key: string;
+          project_name: string;
+          target_workspace_id: string;
+        };
+        Returns: {
+          color: string;
+          description: string;
+          key: string;
+          name: string;
+          project_id: string;
+          workspace_id: string;
+        }[];
+      };
       create_workspace: {
         Args: { requested_name: string };
         Returns: {

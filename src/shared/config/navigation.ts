@@ -11,7 +11,21 @@ export type NavigationItem = {
   href: string;
   icon: LucideIcon;
   disabled?: boolean;
+  matchPrefixes?: string[];
 };
+
+export function isNavigationItemActive(
+  pathname: string,
+  workspaceSlug: string,
+  item: NavigationItem,
+) {
+  return (
+    pathname === item.href ||
+    (item.href !== `/w/${workspaceSlug}` &&
+      pathname.startsWith(`${item.href}/`)) ||
+    item.matchPrefixes?.some((prefix) => pathname.startsWith(prefix)) === true
+  );
+}
 
 export function getPrimaryNavigation(workspaceSlug: string): NavigationItem[] {
   const workspacePath = `/w/${workspaceSlug}`;
@@ -26,7 +40,7 @@ export function getPrimaryNavigation(workspaceSlug: string): NavigationItem[] {
       label: "Projects",
       href: `${workspacePath}/projects`,
       icon: FolderKanban,
-      disabled: true,
+      matchPrefixes: [`${workspacePath}/p/`],
     },
     {
       label: "Members",

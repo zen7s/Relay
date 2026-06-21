@@ -2,6 +2,11 @@ import { expect, type Page } from "@playwright/test";
 
 import { seededUser } from "../fixtures";
 
+type SignInUser = {
+  email: string;
+  password: string;
+};
+
 type MailSummary = {
   ID: string;
   Subject: string;
@@ -19,11 +24,15 @@ type MailMessage = {
 const mailpitUrl = "http://127.0.0.1:54324";
 
 export async function signInSeededUser(page: Page) {
-  await page.goto("/login");
-  await page.getByLabel("Email").fill(seededUser.email);
-  await page.getByLabel("Password", { exact: true }).fill(seededUser.password);
-  await page.getByRole("button", { name: "Sign in" }).click();
+  await signInUser(page, seededUser);
   await expect(page).toHaveURL(`/w/${seededUser.workspaceSlug}`);
+}
+
+export async function signInUser(page: Page, user: SignInUser) {
+  await page.goto("/login");
+  await page.getByLabel("Email").fill(user.email);
+  await page.getByLabel("Password", { exact: true }).fill(user.password);
+  await page.getByRole("button", { name: "Sign in" }).click();
 }
 
 export async function getMailLink(email: string, subject: RegExp) {

@@ -44,4 +44,5 @@ export {
   SheetTrigger,
 } from "./sheet";
 export { Skeleton } from "./skeleton";
+export { Textarea } from "./textarea";
 export { Toaster } from "./toaster";

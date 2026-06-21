@@ -2,7 +2,7 @@ import { execFileSync } from "node:child_process";
 
 import { createClient } from "@supabase/supabase-js";
 
-import { seededUser } from "./fixtures";
+import { seededMember, seededUser } from "./fixtures";
 
 type LocalSupabaseStatus = {
   API_URL: string;
@@ -34,8 +34,9 @@ export default async function globalSetup() {
     throw listError;
   }
 
-  const existingUser = users.users.find(
-    (user) => user.email === seededUser.email,
+  const seededEmails = new Set([seededUser.email, seededMember.email]);
+  const existingUsers = users.users.filter((user) =>
+    seededEmails.has(user.email ?? ""),
   );
 
   await admin
@@ -47,7 +48,7 @@ export default async function globalSetup() {
       "relay-client-workspace",
     ]);
 
-  if (existingUser) {
+  for (const existingUser of existingUsers) {
     const { error } = await admin.auth.admin.deleteUser(existingUser.id);
     if (error) throw error;
   }
@@ -61,6 +62,18 @@ export default async function globalSetup() {
 
   if (createError) {
     throw createError;
+  }
+
+  const { data: memberData, error: memberCreateError } =
+    await admin.auth.admin.createUser({
+      email: seededMember.email,
+      password: seededMember.password,
+      email_confirm: true,
+      user_metadata: { full_name: seededMember.displayName },
+    });
+
+  if (memberCreateError) {
+    throw memberCreateError;
   }
 
   const { data: workspace, error: workspaceError } = await admin
@@ -79,11 +92,18 @@ export default async function globalSetup() {
 
   const { error: membershipError } = await admin
     .from("workspace_members")
-    .insert({
-      workspace_id: workspace.id,
-      user_id: data.user.id,
-      role: "owner",
-    });
+    .insert([
+      {
+        workspace_id: workspace.id,
+        user_id: data.user.id,
+        role: "owner",
+      },
+      {
+        workspace_id: workspace.id,
+        user_id: memberData.user.id,
+        role: "member",
+      },
+    ]);
 
   if (membershipError) {
     throw membershipError;

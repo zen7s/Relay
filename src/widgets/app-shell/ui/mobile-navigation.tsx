@@ -7,7 +7,10 @@ import { Menu, Settings } from "lucide-react";
 import { AccountMenu } from "@/features/account-menu";
 import { ThemeSwitcher } from "@/features/theme-switcher";
 import { WorkspaceSwitcher } from "@/features/workspace-switcher";
-import { getPrimaryNavigation } from "@/shared/config/navigation";
+import {
+  getPrimaryNavigation,
+  isNavigationItemActive,
+} from "@/shared/config/navigation";
 import { cn } from "@/shared/lib";
 import {
   Button,
@@ -67,11 +70,13 @@ export function MobileNavigationTrigger({
         </div>
 
         <nav aria-label="Mobile primary" className="flex-1 space-y-1 px-3">
-          {navigation.map(({ label, href, icon: Icon, disabled }) => {
-            const active =
-              pathname === href ||
-              (href !== `/w/${workspace.slug}` &&
-                pathname.startsWith(`${href}/`));
+          {navigation.map((item) => {
+            const { label, href, icon: Icon, disabled } = item;
+            const active = isNavigationItemActive(
+              pathname,
+              workspace.slug,
+              item,
+            );
 
             const className = cn(
               "flex h-11 items-center gap-3 rounded-lg px-3 text-sm font-medium",
@@ -137,10 +142,9 @@ export function MobileBottomNavigation({
       aria-label="Mobile quick navigation"
       className="fixed inset-x-0 bottom-0 z-40 grid h-[calc(4rem+env(safe-area-inset-bottom))] grid-cols-4 border-t bg-background/95 px-2 pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden"
     >
-      {navigation.map(({ label, href, icon: Icon, disabled }) => {
-        const active =
-          pathname === href ||
-          (href !== `/w/${workspaceSlug}` && pathname.startsWith(`${href}/`));
+      {navigation.map((item) => {
+        const { label, href, icon: Icon, disabled } = item;
+        const active = isNavigationItemActive(pathname, workspaceSlug, item);
 
         const className = cn(
           "flex flex-col items-center justify-center gap-1 text-[10px] font-medium",

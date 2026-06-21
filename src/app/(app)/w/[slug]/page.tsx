@@ -1,5 +1,6 @@
 import { notFound, redirect } from "next/navigation";
 
+import { getWorkspaceProjects } from "@/entities/project";
 import { getCurrentUser } from "@/entities/user";
 import { getWorkspaceBySlug } from "@/entities/workspace";
 import { HomePage } from "@/views/home";
@@ -18,5 +19,7 @@ export default async function WorkspaceOverviewRoute({
   const workspace = await getWorkspaceBySlug(user.id, slug);
   if (!workspace) notFound();
 
-  return <HomePage user={user} workspace={workspace} />;
+  const projects = await getWorkspaceProjects(workspace.id);
+
+  return <HomePage user={user} workspace={workspace} projects={projects} />;
 }

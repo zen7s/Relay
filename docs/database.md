@@ -43,6 +43,7 @@ Owner transfer uses a dedicated transactional RPC. Direct table policies still c
 - Task, label, comment, and attachment relationships use composite keys to prevent cross-project or cross-workspace references.
 - `complete_onboarding` validates the authenticated user and creates the profile update, first workspace, and Owner membership atomically. Repeated submissions return the existing workspace instead of creating duplicates.
 - Workspace management uses narrow RPCs for atomic creation, email-matched invitation acceptance, membership changes, leaving, and Owner transfer. Invitation rows store only SHA-256 token hashes and public previews expose masked email hints.
+- `create_project` authorizes Owner/Admin access and creates a project with its five ordered default columns atomically, so partially initialized boards cannot be produced through the application flow.
 
 ## Verification
 
