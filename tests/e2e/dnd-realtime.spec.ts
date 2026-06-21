@@ -45,6 +45,25 @@ async function dragTaskToColumn(
   );
   await page.mouse.down();
   await page.mouse.move(
+    handleBox.x + handleBox.width / 2 + 12,
+    handleBox.y + handleBox.height / 2,
+    { steps: 2 },
+  );
+
+  const overlay = page.locator('[data-testid="task-drag-overlay"]:visible');
+  await expect(overlay).toHaveCount(1);
+  await expect(overlay).toBeVisible();
+  const overlayBox = await overlay.boundingBox();
+  const viewport = page.viewportSize();
+  if (!overlayBox || !viewport) {
+    throw new Error("Drag overlay or viewport dimensions are unavailable.");
+  }
+  expect(overlayBox.x).toBeGreaterThanOrEqual(0);
+  expect(overlayBox.y).toBeGreaterThanOrEqual(0);
+  expect(overlayBox.x + overlayBox.width).toBeLessThanOrEqual(viewport.width);
+  expect(overlayBox.y + overlayBox.height).toBeLessThanOrEqual(viewport.height);
+
+  await page.mouse.move(
     columnBox.x + columnBox.width / 2,
     Math.min(columnBox.y + columnBox.height - 72, 820),
     { steps: 16 },
@@ -150,7 +169,8 @@ test("supports accessible DnD, rollback, and cross-client realtime", async ({
   await firstHandle.focus();
   await page.keyboard.press("Space");
   await expect(firstHandle).toHaveAttribute("aria-pressed", "true");
-  await page.keyboard.press("ArrowDown");
+  await page.keyboard.press("ArrowRight");
+  await page.keyboard.press("ArrowRight");
   await expect(
     page.getByRole("status").filter({ hasText: "is over In progress column" }),
   ).toBeVisible();

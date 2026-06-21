@@ -549,10 +549,7 @@ export function KanbanBoard({
   }
 
   return (
-    <section
-      aria-label="Kanban board"
-      className="min-w-0 overflow-hidden contain-paint"
-    >
+    <section aria-label="Kanban board" className="min-w-0 overflow-hidden">
       <div className="mb-2 flex items-center justify-end px-1">
         <span
           aria-label="Realtime status"
@@ -612,7 +609,10 @@ export function KanbanBoard({
           }
         >
           {activeTask ? (
-            <div className="w-64 rounded-xl border border-primary/30 bg-card p-3 text-sm font-medium shadow-xl">
+            <div
+              data-testid="task-drag-overlay"
+              className="w-64 rounded-xl border border-primary/30 bg-card p-3 text-sm font-medium shadow-xl"
+            >
               {activeTask.title}
             </div>
           ) : null}
