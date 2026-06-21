@@ -39,7 +39,7 @@ test("completes signup, email confirmation, onboarding, and password recovery", 
   await page.getByLabel("Workspace name").fill("Taylor Studio");
   await page.getByRole("button", { name: "Create workspace" }).click();
 
-  await expect(page).toHaveURL("/");
+  await expect(page).toHaveURL(/\/w\/[^/]+$/);
   await expect(
     page.getByRole("heading", { name: "Good morning, Taylor" }),
   ).toBeVisible();
@@ -62,14 +62,14 @@ test("completes signup, email confirmation, onboarding, and password recovery", 
   await page.getByLabel("New password", { exact: true }).fill(newPassword);
   await page.getByLabel("Confirm new password").fill(newPassword);
   await page.getByRole("button", { name: "Update password" }).click();
-  await expect(page).toHaveURL("/");
+  await expect(page).toHaveURL(/\/w\/[^/]+$/);
 
   await context.clearCookies();
   await page.goto("/login");
   await page.getByLabel("Email").fill(email);
   await page.getByLabel("Password", { exact: true }).fill(newPassword);
   await page.getByRole("button", { name: "Sign in" }).click();
-  await expect(page).toHaveURL("/");
+  await expect(page).toHaveURL(/\/w\/[^/]+$/);
 
   await page.getByRole("button", { name: "Open account menu" }).last().click();
   await page.getByRole("menuitem", { name: "Sign out" }).click();

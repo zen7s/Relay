@@ -2,7 +2,6 @@ import { redirect } from "next/navigation";
 
 import { getCurrentUser } from "@/entities/user";
 import { getPrimaryWorkspace } from "@/entities/workspace";
-import { HomePage } from "@/views/home";
 
 export default async function Home() {
   const user = await getCurrentUser();
@@ -17,5 +16,5 @@ export default async function Home() {
     redirect("/onboarding");
   }
 
-  return <HomePage user={user} workspace={workspace} />;
+  redirect(`/w/${workspace.slug}`);
 }

@@ -50,12 +50,14 @@ export async function completeOnboardingAction(
     redirect("/login");
   }
 
-  const { error } = await supabase.rpc("complete_onboarding", {
-    profile_display_name: result.data.displayName,
-    requested_workspace_name: result.data.workspaceName,
-  });
+  const { data, error } = await supabase
+    .rpc("complete_onboarding", {
+      profile_display_name: result.data.displayName,
+      requested_workspace_name: result.data.workspaceName,
+    })
+    .single();
 
-  if (error) {
+  if (error || !data) {
     return {
       status: "error",
       message: "We could not create your workspace. Please try again.",
@@ -64,5 +66,5 @@ export async function completeOnboardingAction(
   }
 
   revalidatePath("/", "layout");
-  redirect("/");
+  redirect(`/w/${data.workspace_slug}`);
 }

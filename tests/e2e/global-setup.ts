@@ -38,7 +38,14 @@ export default async function globalSetup() {
     (user) => user.email === seededUser.email,
   );
 
-  await admin.from("workspaces").delete().eq("slug", seededUser.workspaceSlug);
+  await admin
+    .from("workspaces")
+    .delete()
+    .in("slug", [
+      seededUser.workspaceSlug,
+      "relay-e2e-sandbox",
+      "relay-client-workspace",
+    ]);
 
   if (existingUser) {
     const { error } = await admin.auth.admin.deleteUser(existingUser.id);

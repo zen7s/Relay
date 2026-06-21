@@ -529,6 +529,13 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
+      accept_workspace_invitation: {
+        Args: { invitation_token: string };
+        Returns: {
+          workspace_id: string;
+          workspace_slug: string;
+        }[];
+      };
       complete_onboarding: {
         Args: {
           profile_display_name: string;
@@ -538,6 +545,77 @@ export type Database = {
           workspace_id: string;
           workspace_slug: string;
         }[];
+      };
+      create_workspace: {
+        Args: { requested_name: string };
+        Returns: {
+          workspace_id: string;
+          workspace_name: string;
+          workspace_slug: string;
+        }[];
+      };
+      create_workspace_invitation: {
+        Args: {
+          invitation_expires_at: string;
+          invitation_token_hash: string;
+          invited_email: string;
+          invited_role: Database["public"]["Enums"]["workspace_role"];
+          target_workspace_id: string;
+        };
+        Returns: string;
+      };
+      get_workspace_invitation: {
+        Args: { invitation_token: string };
+        Returns: {
+          email_hint: string;
+          invitation_expires_at: string;
+          invitation_role: Database["public"]["Enums"]["workspace_role"];
+          invitation_status: string;
+          workspace_name: string;
+          workspace_slug: string;
+        }[];
+      };
+      get_workspace_members: {
+        Args: { target_workspace_id: string };
+        Returns: {
+          display_name: string;
+          email: string;
+          joined_at: string;
+          member_role: Database["public"]["Enums"]["workspace_role"];
+          user_id: string;
+        }[];
+      };
+      leave_workspace: {
+        Args: { target_workspace_id: string };
+        Returns: undefined;
+      };
+      remove_workspace_member: {
+        Args: { target_user_id: string; target_workspace_id: string };
+        Returns: undefined;
+      };
+      resend_workspace_invitation: {
+        Args: {
+          invitation_expires_at: string;
+          invitation_token_hash: string;
+          target_invitation_id: string;
+        };
+        Returns: undefined;
+      };
+      revoke_workspace_invitation: {
+        Args: { target_invitation_id: string };
+        Returns: undefined;
+      };
+      transfer_workspace_ownership: {
+        Args: { target_user_id: string; target_workspace_id: string };
+        Returns: undefined;
+      };
+      update_workspace_member_role: {
+        Args: {
+          requested_role: Database["public"]["Enums"]["workspace_role"];
+          target_user_id: string;
+          target_workspace_id: string;
+        };
+        Returns: undefined;
       };
     };
     Enums: {

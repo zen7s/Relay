@@ -10,6 +10,8 @@ type LoginPageProps = {
 };
 
 export function LoginPage({ next, error }: LoginPageProps) {
+  const destination = getSafeRedirectPath(next);
+
   return (
     <AuthShell
       eyebrow="Welcome back"
@@ -19,7 +21,7 @@ export function LoginPage({ next, error }: LoginPageProps) {
         <>
           New to Relay?{" "}
           <Link
-            href="/signup"
+            href={`/signup?next=${encodeURIComponent(destination)}`}
             className="font-medium text-primary hover:underline"
           >
             Create an account
@@ -27,10 +29,7 @@ export function LoginPage({ next, error }: LoginPageProps) {
         </>
       }
     >
-      <LoginForm
-        next={getSafeRedirectPath(next)}
-        initialError={error?.slice(0, 180)}
-      />
+      <LoginForm next={destination} initialError={error?.slice(0, 180)} />
     </AuthShell>
   );
 }

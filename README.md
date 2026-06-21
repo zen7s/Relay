@@ -4,7 +4,7 @@ Relay is an English-language project management SaaS for small product and creat
 
 ## Current state
 
-Stages 1–4 are implemented: the responsive application shell and workspace-isolated database now include cookie-backed Supabase SSR authentication, email confirmation and recovery, Google OAuth integration, protected routes, generated profiles, and atomic first-workspace onboarding.
+Stages 1–5 are implemented: the responsive application shell and workspace-isolated database now include complete authentication, multiple workspace URLs and switching, role-aware member management, secure email invitations, and atomic Owner transfer rules.
 
 ## Requirements
 
@@ -26,7 +26,7 @@ pnpm dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
-The Supabase command requires Docker and prints the local URL and development keys. The unused Edge Runtime container is excluded; Auth, REST, Realtime, Storage, and Studio remain available. Confirmation and recovery emails are captured by Mailpit at [http://127.0.0.1:54324](http://127.0.0.1:54324).
+The Supabase command requires Docker and prints the local URL and development keys. The unused Edge Runtime container is excluded; Auth, REST, Realtime, Storage, and Studio remain available. Confirmation, recovery, and workspace invitation emails are captured by Mailpit at [http://127.0.0.1:54324](http://127.0.0.1:54324). Production invitations switch to Resend when its server-only API key and verified sender are configured.
 
 Apply all migrations, seed data, and database verification gates:
 
@@ -34,7 +34,7 @@ Apply all migrations, seed data, and database verification gates:
 pnpm db:verify
 ```
 
-Supabase Studio is available at [http://127.0.0.1:54323](http://127.0.0.1:54323). See [database architecture](docs/database.md) and [authentication setup](docs/authentication.md), including the required Google callback URLs.
+Supabase Studio is available at [http://127.0.0.1:54323](http://127.0.0.1:54323). See [database architecture](docs/database.md), [authentication setup](docs/authentication.md), and [workspace/member operations](docs/workspaces.md).
 
 ## Quality commands
 

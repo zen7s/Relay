@@ -1,9 +1,16 @@
 import Link from "next/link";
 
 import { SignupForm } from "@/features/auth";
+import { getSafeRedirectPath } from "@/shared/lib";
 import { AuthShell } from "@/widgets/auth-shell";
 
-export function SignupPage() {
+type SignupPageProps = {
+  next?: string | undefined;
+};
+
+export function SignupPage({ next }: SignupPageProps) {
+  const destination = getSafeRedirectPath(next, "/onboarding");
+
   return (
     <AuthShell
       eyebrow="Start with clarity"
@@ -13,7 +20,7 @@ export function SignupPage() {
         <>
           Already have an account?{" "}
           <Link
-            href="/login"
+            href={`/login?next=${encodeURIComponent(destination)}`}
             className="font-medium text-primary hover:underline"
           >
             Sign in
@@ -21,7 +28,7 @@ export function SignupPage() {
         </>
       }
     >
-      <SignupForm />
+      <SignupForm next={destination} />
     </AuthShell>
   );
 }

@@ -23,7 +23,7 @@ export async function signInSeededUser(page: Page) {
   await page.getByLabel("Email").fill(seededUser.email);
   await page.getByLabel("Password", { exact: true }).fill(seededUser.password);
   await page.getByRole("button", { name: "Sign in" }).click();
-  await expect(page).toHaveURL("/");
+  await expect(page).toHaveURL(`/w/${seededUser.workspaceSlug}`);
 }
 
 export async function getMailLink(email: string, subject: RegExp) {

@@ -8,12 +8,16 @@ import { AuthField, AuthFormStatus } from "./form-parts";
 import { GoogleSignInButton } from "./google-sign-in-button";
 import { SubmitButton } from "./submit-button";
 
-export function SignupForm() {
+type SignupFormProps = {
+  next?: string | undefined;
+};
+
+export function SignupForm({ next = "/onboarding" }: SignupFormProps) {
   const [state, action] = useActionState(signUpAction, initialAuthActionState);
 
   return (
     <div className="space-y-5">
-      <GoogleSignInButton next="/onboarding" />
+      <GoogleSignInButton next={next} />
 
       <div className="flex items-center gap-3 text-xs text-muted-foreground">
         <span className="h-px flex-1 bg-border" />
@@ -22,6 +26,7 @@ export function SignupForm() {
       </div>
 
       <form action={action} className="space-y-4" noValidate>
+        <input type="hidden" name="next" value={next} />
         <AuthField
           label="Full name"
           name="fullName"

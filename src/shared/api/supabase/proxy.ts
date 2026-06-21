@@ -10,6 +10,7 @@ const guestOnlyPaths = new Set(["/login", "/signup", "/forgot-password"]);
 const protectedPrefixes = [
   "/onboarding",
   "/reset-password",
+  "/w",
   "/projects",
   "/team",
   "/reports",

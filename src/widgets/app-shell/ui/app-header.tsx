@@ -8,13 +8,18 @@ import { MobileNavigationTrigger } from "./mobile-navigation";
 
 type AppHeaderProps = {
   user: { displayName: string; email: string };
-  workspace: { name: string; role: string };
+  workspace: { name: string; slug: string; role: string };
+  workspaces: Array<{ name: string; slug: string; role: string }>;
 };
 
-export function AppHeader({ user, workspace }: AppHeaderProps) {
+export function AppHeader({ user, workspace, workspaces }: AppHeaderProps) {
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b bg-background/90 px-4 backdrop-blur-lg sm:px-6 lg:px-8">
-      <MobileNavigationTrigger user={user} workspace={workspace} />
+      <MobileNavigationTrigger
+        user={user}
+        workspace={workspace}
+        workspaces={workspaces}
+      />
       <RelayLogo className="mr-auto md:hidden" />
 
       <div className="relative hidden w-full max-w-md sm:block">

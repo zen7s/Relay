@@ -10,29 +10,34 @@ export type NavigationItem = {
   label: string;
   href: string;
   icon: LucideIcon;
-  active?: boolean;
+  disabled?: boolean;
 };
 
-export const primaryNavigation: NavigationItem[] = [
-  {
-    label: "Overview",
-    href: "/",
-    icon: LayoutDashboard,
-    active: true,
-  },
-  {
-    label: "Projects",
-    href: "/projects",
-    icon: FolderKanban,
-  },
-  {
-    label: "Team",
-    href: "/team",
-    icon: UsersRound,
-  },
-  {
-    label: "Reports",
-    href: "/reports",
-    icon: BarChart3,
-  },
-];
+export function getPrimaryNavigation(workspaceSlug: string): NavigationItem[] {
+  const workspacePath = `/w/${workspaceSlug}`;
+
+  return [
+    {
+      label: "Overview",
+      href: workspacePath,
+      icon: LayoutDashboard,
+    },
+    {
+      label: "Projects",
+      href: `${workspacePath}/projects`,
+      icon: FolderKanban,
+      disabled: true,
+    },
+    {
+      label: "Members",
+      href: `${workspacePath}/members`,
+      icon: UsersRound,
+    },
+    {
+      label: "Reports",
+      href: `${workspacePath}/reports`,
+      icon: BarChart3,
+      disabled: true,
+    },
+  ];
+}

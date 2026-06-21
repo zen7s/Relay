@@ -114,6 +114,7 @@ export async function signUpAction(
     email: formData.get("email"),
     password: formData.get("password"),
     confirmPassword: formData.get("confirmPassword"),
+    next: formData.get("next"),
   });
 
   if (!result.success) {
@@ -122,12 +123,15 @@ export async function signUpAction(
 
   const supabase = await createServerSupabaseClient();
   const origin = await getRequestOrigin();
+  const destination = getSafeRedirectPath(result.data.next, "/onboarding");
+  const callback = new URL("/auth/callback", origin);
+  callback.searchParams.set("next", destination);
   const { data, error } = await supabase.auth.signUp({
     email: result.data.email,
     password: result.data.password,
     options: {
       data: { full_name: result.data.fullName },
-      emailRedirectTo: `${origin}/auth/callback?next=/onboarding`,
+      emailRedirectTo: callback.toString(),
     },
   });
 
@@ -144,7 +148,7 @@ export async function signUpAction(
 
   if (data.session) {
     revalidatePath("/", "layout");
-    redirect("/onboarding");
+    redirect(destination);
   }
 
   return {

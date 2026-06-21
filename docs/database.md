@@ -30,7 +30,7 @@ erDiagram
 | Edit/delete own comments               | Yes   | Yes   | Yes    |
 | Change or remove Owner directly        | No    | No    | No     |
 
-Owner transfer is intentionally reserved for a dedicated transactional server flow in the workspace-management stage. Direct table policies cannot create, update, or delete an existing Owner membership.
+Owner transfer uses a dedicated transactional RPC. Direct table policies still cannot create, update, or delete an existing Owner membership.
 
 ## Security model
 
@@ -42,6 +42,7 @@ Owner transfer is intentionally reserved for a dedicated transactional server fl
 - Task assignees are constrained to members of the same workspace.
 - Task, label, comment, and attachment relationships use composite keys to prevent cross-project or cross-workspace references.
 - `complete_onboarding` validates the authenticated user and creates the profile update, first workspace, and Owner membership atomically. Repeated submissions return the existing workspace instead of creating duplicates.
+- Workspace management uses narrow RPCs for atomic creation, email-matched invitation acceptance, membership changes, leaving, and Owner transfer. Invitation rows store only SHA-256 token hashes and public previews expose masked email hints.
 
 ## Verification
 

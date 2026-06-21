@@ -26,6 +26,7 @@ export const signupSchema = z
     email: emailSchema,
     password: passwordSchema,
     confirmPassword: z.string(),
+    next: z.string().optional(),
   })
   .refine((values) => values.password === values.confirmPassword, {
     message: "Passwords do not match.",

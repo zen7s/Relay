@@ -5,20 +5,26 @@ import { MobileBottomNavigation } from "./mobile-navigation";
 type AppShellProps = Readonly<{
   children: React.ReactNode;
   user: { displayName: string; email: string };
-  workspace: { name: string; role: string };
+  workspace: { name: string; slug: string; role: string };
+  workspaces: Array<{ name: string; slug: string; role: string }>;
 }>;
 
-export function AppShell({ children, user, workspace }: AppShellProps) {
+export function AppShell({
+  children,
+  user,
+  workspace,
+  workspaces,
+}: AppShellProps) {
   return (
     <div className="min-h-dvh bg-background">
-      <AppSidebar user={user} workspace={workspace} />
+      <AppSidebar user={user} workspace={workspace} workspaces={workspaces} />
       <div className="min-w-0 md:pl-18 xl:pl-64">
-        <AppHeader user={user} workspace={workspace} />
+        <AppHeader user={user} workspace={workspace} workspaces={workspaces} />
         <main className="min-w-0 px-4 pt-6 pb-24 sm:px-6 md:pb-8 lg:px-8 lg:pt-8">
           {children}
         </main>
       </div>
-      <MobileBottomNavigation />
+      <MobileBottomNavigation workspaceSlug={workspace.slug} />
     </div>
   );
 }
