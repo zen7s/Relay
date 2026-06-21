@@ -1,13 +1,14 @@
 import Link from "next/link";
 import {
-  Archive,
   ArrowRight,
-  Columns3,
+  CalendarClock,
+  CheckCircle2,
   FolderKanban,
-  ShieldCheck,
+  ListTodo,
 } from "lucide-react";
 
 import type { Project } from "@/entities/project";
+import type { WorkspaceTaskStats } from "@/entities/task";
 import { ProjectFormDialog } from "@/features/project-management";
 import { Badge, Button } from "@/shared/ui";
 
@@ -15,16 +16,17 @@ type DashboardOverviewProps = {
   displayName: string;
   workspace: { id: string; name: string; slug: string; role: string };
   projects: Project[];
+  taskStats: WorkspaceTaskStats;
 };
 
 export function DashboardOverview({
   displayName,
   workspace,
   projects,
+  taskStats,
 }: DashboardOverviewProps) {
   const firstName = displayName.split(/\s+/)[0] || displayName;
   const activeProjects = projects.filter((project) => !project.archived_at);
-  const archivedProjects = projects.filter((project) => project.archived_at);
   const canManage = workspace.role === "owner" || workspace.role === "admin";
   const dateLabel = new Intl.DateTimeFormat("en-US", {
     weekday: "long",
@@ -41,25 +43,25 @@ export function DashboardOverview({
       tone: "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400",
     },
     {
-      label: "Archived projects",
-      value: String(archivedProjects.length),
-      note: "Data remains available",
-      icon: Archive,
-      tone: "bg-slate-500/10 text-slate-600 dark:text-slate-400",
-    },
-    {
-      label: "Board columns",
-      value: String(activeProjects.length * 5),
-      note: "Across active projects",
-      icon: Columns3,
+      label: "Open tasks",
+      value: String(taskStats.open),
+      note: `${taskStats.urgent} urgent`,
+      icon: ListTodo,
       tone: "bg-sky-500/10 text-sky-600 dark:text-sky-400",
     },
     {
-      label: "Workspace access",
-      value: workspace.role,
-      note: canManage ? "Project management enabled" : "Project collaboration",
-      icon: ShieldCheck,
+      label: "Completed tasks",
+      value: String(taskStats.completed),
+      note: "Currently in Done",
+      icon: CheckCircle2,
       tone: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
+    },
+    {
+      label: "Due in 7 days",
+      value: String(taskStats.dueSoon),
+      note: "Includes overdue work",
+      icon: CalendarClock,
+      tone: "bg-amber-500/10 text-amber-600 dark:text-amber-400",
     },
   ];
 

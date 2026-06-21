@@ -1,6 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 
 import { getWorkspaceProjects } from "@/entities/project";
+import { getWorkspaceTaskStats } from "@/entities/task";
 import { getCurrentUser } from "@/entities/user";
 import { getWorkspaceBySlug } from "@/entities/workspace";
 import { HomePage } from "@/views/home";
@@ -19,7 +20,17 @@ export default async function WorkspaceOverviewRoute({
   const workspace = await getWorkspaceBySlug(user.id, slug);
   if (!workspace) notFound();
 
-  const projects = await getWorkspaceProjects(workspace.id);
+  const [projects, taskStats] = await Promise.all([
+    getWorkspaceProjects(workspace.id),
+    getWorkspaceTaskStats(workspace.id),
+  ]);
 
-  return <HomePage user={user} workspace={workspace} projects={projects} />;
+  return (
+    <HomePage
+      user={user}
+      workspace={workspace}
+      projects={projects}
+      taskStats={taskStats}
+    />
+  );
 }

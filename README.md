@@ -4,7 +4,7 @@ Relay is an English-language project management SaaS for small product and creat
 
 ## Current state
 
-Stages 1–6 are implemented: the responsive application shell and workspace-isolated database now include complete authentication, multiple workspace URLs and switching, role-aware member management, secure email invitations, and independent project boards with atomic default-column creation and archive/restore workflows.
+Stages 1–7 are implemented: the responsive application shell and workspace-isolated database now include complete authentication, multiple workspace URLs and switching, role-aware member management, secure email invitations, independent project boards, and a functional Kanban workflow with task CRUD, filtering, labels, assignment, archive/restore, and transactional movement.
 
 ## Requirements
 
@@ -34,7 +34,7 @@ Apply all migrations, seed data, and database verification gates:
 pnpm db:verify
 ```
 
-Supabase Studio is available at [http://127.0.0.1:54323](http://127.0.0.1:54323). See [database architecture](docs/database.md), [authentication setup](docs/authentication.md), [workspace/member operations](docs/workspaces.md), and [project/board operations](docs/projects.md).
+Supabase Studio is available at [http://127.0.0.1:54323](http://127.0.0.1:54323). See [database architecture](docs/database.md), [authentication setup](docs/authentication.md), [workspace/member operations](docs/workspaces.md), [project/board operations](docs/projects.md), and [task/Kanban operations](docs/tasks.md).
 
 ## Quality commands
 
@@ -64,7 +64,7 @@ The application shell adapts at three levels:
 - Tablet: compact icon navigation with the same content hierarchy.
 - Mobile: touch-friendly header, navigation drawer, and fixed quick navigation.
 
-The dashboard content is representative UI for this stage. Project and task behavior is connected in later roadmap stages.
+The dashboard reports live project and task totals. Project boards are fully functional without drag and drop; accessible DnD, optimistic updates, and Realtime synchronization arrive in stage 8.
 
 ## Architecture
 

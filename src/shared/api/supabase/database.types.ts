@@ -563,6 +563,20 @@ export type Database = {
           workspace_id: string;
         }[];
       };
+      create_task: {
+        Args: {
+          target_column_id: string;
+          target_project_id: string;
+          target_workspace_id: string;
+          task_assignee_id?: string;
+          task_description: string;
+          task_due_date?: string;
+          task_label_ids?: string[];
+          task_priority: Database["public"]["Enums"]["task_priority"];
+          task_title: string;
+        };
+        Returns: string;
+      };
       create_workspace: {
         Args: { requested_name: string };
         Returns: {
@@ -606,6 +620,13 @@ export type Database = {
         Args: { target_workspace_id: string };
         Returns: undefined;
       };
+      move_task: {
+        Args: { target_column_id: string; target_task_id: string };
+        Returns: {
+          new_column_id: string;
+          new_position: number;
+        }[];
+      };
       remove_workspace_member: {
         Args: { target_user_id: string; target_workspace_id: string };
         Returns: undefined;
@@ -622,8 +643,24 @@ export type Database = {
         Args: { target_invitation_id: string };
         Returns: undefined;
       };
+      set_task_archived: {
+        Args: { should_archive: boolean; target_task_id: string };
+        Returns: undefined;
+      };
       transfer_workspace_ownership: {
         Args: { target_user_id: string; target_workspace_id: string };
+        Returns: undefined;
+      };
+      update_task: {
+        Args: {
+          target_task_id: string;
+          task_assignee_id?: string;
+          task_description: string;
+          task_due_date?: string;
+          task_label_ids?: string[];
+          task_priority: Database["public"]["Enums"]["task_priority"];
+          task_title: string;
+        };
         Returns: undefined;
       };
       update_workspace_member_role: {

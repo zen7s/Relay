@@ -26,7 +26,8 @@ erDiagram
 | Manage invitations and non-owner roles | Yes   | Yes   | No     |
 | Manage workspace settings and projects | Yes   | Yes   | No     |
 | Delete workspace                       | Yes   | No    | No     |
-| Create and edit tasks and labels       | Yes   | Yes   | Yes    |
+| Create, edit, move, and archive tasks  | Yes   | Yes   | Yes    |
+| Manage project labels                  | Yes   | Yes   | No     |
 | Edit/delete own comments               | Yes   | Yes   | Yes    |
 | Change or remove Owner directly        | No    | No    | No     |
 
@@ -44,6 +45,8 @@ Owner transfer uses a dedicated transactional RPC. Direct table policies still c
 - `complete_onboarding` validates the authenticated user and creates the profile update, first workspace, and Owner membership atomically. Repeated submissions return the existing workspace instead of creating duplicates.
 - Workspace management uses narrow RPCs for atomic creation, email-matched invitation acceptance, membership changes, leaving, and Owner transfer. Invitation rows store only SHA-256 token hashes and public previews expose masked email hints.
 - `create_project` authorizes Owner/Admin access and creates a project with its five ordered default columns atomically, so partially initialized boards cannot be produced through the application flow.
+- Task creation, editing, movement, and archive/restore use narrow security-definer RPCs. Each function verifies active-project state and workspace membership; assignment and labels must belong to the task workspace/project.
+- `move_task` locks the task and target column, then appends the task using a stable gapped position in one transaction. Stage 8 can build DnD and position normalization on this invariant without trusting client-computed ordering.
 
 ## Verification
 
