@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Upload } from "tus-js-client";
@@ -23,6 +23,18 @@ type UseTaskAttachmentsOptions = {
 const attachmentSelection =
   "id, workspace_id, project_id, task_id, uploader_id, storage_path, file_name, content_type, size_bytes, created_at, uploader:profiles!attachments_uploader_id_fkey(display_name, avatar_path)";
 
+class UploadCancelledError extends Error {
+  constructor() {
+    super("Attachment upload cancelled.");
+    this.name = "UploadCancelledError";
+  }
+}
+
+type ActiveUpload = {
+  upload: Upload;
+  reject: (reason: UploadCancelledError) => void;
+};
+
 export function useTaskAttachments({
   workspaceId,
   projectId,
@@ -36,6 +48,7 @@ export function useTaskAttachments({
     [workspaceId, projectId, taskId],
   );
   const [uploadProgress, setUploadProgress] = useState<number>();
+  const activeUploadRef = useRef<ActiveUpload | undefined>(undefined);
 
   const attachmentsQuery = useQuery({
     queryKey,
@@ -102,12 +115,24 @@ export function useTaskAttachments({
             contentType: validation.contentType,
             cacheControl: "3600",
           },
-          onError: reject,
+          onError: (error) => {
+            if (activeUploadRef.current?.upload !== upload) return;
+            activeUploadRef.current = undefined;
+            reject(error);
+          },
           onProgress: (uploaded, total) => {
             setUploadProgress(Math.round((uploaded / total) * 100));
           },
-          onSuccess: () => resolve(),
+          onSuccess: () => {
+            if (activeUploadRef.current?.upload !== upload) return;
+            activeUploadRef.current = undefined;
+            resolve();
+          },
         });
+        activeUploadRef.current = {
+          upload,
+          reject: (reason) => reject(reason),
+        };
         upload.start();
       });
 
@@ -129,11 +154,29 @@ export function useTaskAttachments({
       await queryClient.invalidateQueries({ queryKey });
       toast.success("File uploaded.");
       return true;
-    } catch {
+    } catch (error) {
+      if (error instanceof UploadCancelledError) {
+        toast.info("Upload cancelled.");
+        return false;
+      }
+
       toast.error("File upload failed. Please try again.");
       return false;
     } finally {
+      activeUploadRef.current = undefined;
       setUploadProgress(undefined);
+    }
+  };
+
+  const cancelUpload = async () => {
+    const activeUpload = activeUploadRef.current;
+    if (!activeUpload) return;
+
+    activeUploadRef.current = undefined;
+    try {
+      await activeUpload.upload.abort(true);
+    } finally {
+      activeUpload.reject(new UploadCancelledError());
     }
   };
 
@@ -180,6 +223,7 @@ export function useTaskAttachments({
     attachments: attachmentsQuery.data,
     error: attachmentsQuery.error,
     uploadFile,
+    cancelUpload,
     uploadProgress,
     isUploading: uploadProgress !== undefined,
     deleteAttachment: deleteMutation.mutateAsync,

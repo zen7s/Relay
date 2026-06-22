@@ -1,4 +1,10 @@
-import { expect, test, type Browser, type Page } from "@playwright/test";
+import {
+  expect,
+  test,
+  type Browser,
+  type Page,
+  type Route,
+} from "@playwright/test";
 
 import { seededMember, seededUser } from "./fixtures";
 import { signInSeededUser, signInUser } from "./support/auth";
@@ -111,6 +117,26 @@ test("supports realtime comments and private task attachments", async ({
   }
 
   const uploadInput = panel.getByLabel("Upload attachment");
+  const delayedUploadPattern = "**/storage/v1/upload/resumable**";
+  const delayUpload = async (route: Route) => {
+    await new Promise((resolve) => setTimeout(resolve, 3_000));
+    await route.continue().catch(() => undefined);
+  };
+  await page.route(delayedUploadPattern, delayUpload);
+  await uploadInput.setInputFiles({
+    name: "cancelled.txt",
+    mimeType: "text/plain",
+    buffer: Buffer.alloc(512 * 1024, "c"),
+  });
+  await expect(panel.getByLabel("Attachment upload progress")).toBeVisible();
+  await panel.getByRole("button", { name: "Cancel attachment upload" }).click();
+  await expect(page.getByText("Upload cancelled.")).toBeVisible();
+  await expect(panel.getByLabel("Attachment upload progress")).toHaveCount(0);
+  await expect(
+    panel.getByRole("article", { name: "cancelled.txt" }),
+  ).toHaveCount(0);
+  await page.unroute(delayedUploadPattern, delayUpload);
+
   await uploadInput.setInputFiles({
     name: "handoff.txt",
     mimeType: "text/plain",

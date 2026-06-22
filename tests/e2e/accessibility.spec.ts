@@ -4,6 +4,10 @@ import { expect, test, type Page } from "@playwright/test";
 import { seededUser } from "./fixtures";
 import { signInSeededUser } from "./support/auth";
 
+test.beforeEach(async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+});
+
 async function expectNoAccessibilityViolations(page: Page, context: string) {
   await page.waitForTimeout(250);
 

@@ -1,0 +1,54 @@
+name: Backup production database
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "23 2 * * *"
+
+concurrency:
+  group: production-database-backup
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    environment: production
+    timeout-minutes: 15
+    env:
+      SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+      SUPABASE_BACKUP_ENCRYPTION_KEY: ${{ secrets.SUPABASE_BACKUP_ENCRYPTION_KEY }}
+      SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+    steps:
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Create encrypted logical backup
+        shell: bash
+        run: |
+          set -euo pipefail
+          timestamp="$(date -u +%Y%m%dT%H%M%SZ)"
+          dump="relay-${timestamp}.sql"
+          archive="${dump}.gz"
+          encrypted="${archive}.enc"
+          database_url="postgresql://postgres.${SUPABASE_PROJECT_ID}:${SUPABASE_DB_PASSWORD}@aws-1-eu-central-1.pooler.supabase.com:5432/postgres"
+
+          supabase db dump --db-url "$database_url" --file "$dump"
+          gzip "$dump"
+          openssl enc -aes-256-cbc -salt -pbkdf2 \
+            -pass env:SUPABASE_BACKUP_ENCRYPTION_KEY \
+            -in "$archive" \
+            -out "$encrypted"
+          rm "$archive"
+          echo "BACKUP_FILE=$encrypted" >> "$GITHUB_ENV"
+
+      - name: Upload encrypted backup
+        uses: actions/upload-artifact@v4
+        with:
+          name: relay-production-database-${{ github.run_id }}
+          path: ${{ env.BACKUP_FILE }}
+          if-no-files-found: error
+          retention-days: 30

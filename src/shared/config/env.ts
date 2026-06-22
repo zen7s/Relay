@@ -5,6 +5,7 @@ const publicEnvironmentSchema = z
     NEXT_PUBLIC_SITE_URL: z.url().default("http://127.0.0.1:3000"),
     NEXT_PUBLIC_SUPABASE_URL: z.url().optional(),
     NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: z.string().min(1).optional(),
+    NEXT_PUBLIC_SENTRY_DSN: z.url().optional(),
   })
   .superRefine((environment, context) => {
     const hasUrl = environment.NEXT_PUBLIC_SUPABASE_URL !== undefined;
@@ -44,6 +45,7 @@ export const publicEnvironment = parsePublicEnvironment({
   NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL || undefined,
   NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:
     process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || undefined,
+  NEXT_PUBLIC_SENTRY_DSN: process.env.NEXT_PUBLIC_SENTRY_DSN || undefined,
 });
 
 export function getSupabasePublicConfig(): SupabasePublicConfig {

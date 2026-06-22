@@ -29,4 +29,16 @@ describe("parsePublicEnvironment", () => {
       }),
     ).toThrow("Supabase URL and publishable key must be configured together");
   });
+
+  it("accepts a Sentry DSN and rejects malformed monitoring URLs", () => {
+    expect(
+      parsePublicEnvironment({
+        NEXT_PUBLIC_SENTRY_DSN: "https://public@example.ingest.sentry.io/1",
+      }).NEXT_PUBLIC_SENTRY_DSN,
+    ).toBe("https://public@example.ingest.sentry.io/1");
+
+    expect(() =>
+      parsePublicEnvironment({ NEXT_PUBLIC_SENTRY_DSN: "not-a-url" }),
+    ).toThrow();
+  });
 });

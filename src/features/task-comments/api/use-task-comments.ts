@@ -42,6 +42,7 @@ export function useTaskComments({
   );
   const [realtimeStatus, setRealtimeStatus] =
     useState<CommentsRealtimeStatus>("connecting");
+  const [connectionGeneration, setConnectionGeneration] = useState(0);
 
   const commentsQuery = useQuery({
     queryKey,
@@ -73,8 +74,17 @@ export function useTaskComments({
   }, [initialComments, queryClient, queryKey]);
 
   useEffect(() => {
+    let reconciliationTimeout: ReturnType<typeof setTimeout> | undefined;
+    const handleOffline = () => setRealtimeStatus("offline");
+    const handleOnline = () => {
+      setRealtimeStatus("connecting");
+      setConnectionGeneration((generation) => generation + 1);
+    };
+    window.addEventListener("offline", handleOffline);
+    window.addEventListener("online", handleOnline);
+
     const channel = supabase
-      .channel(`task-comments:${taskId}`)
+      .channel(`task-comments:${taskId}:${connectionGeneration}`)
       .on(
         "postgres_changes",
         {
@@ -91,6 +101,10 @@ export function useTaskComments({
         if (status === "SUBSCRIBED") {
           setRealtimeStatus("live");
           void queryClient.invalidateQueries({ queryKey });
+          clearTimeout(reconciliationTimeout);
+          reconciliationTimeout = setTimeout(() => {
+            void queryClient.invalidateQueries({ queryKey });
+          }, 5_000);
           return;
         }
         if (
@@ -103,9 +117,12 @@ export function useTaskComments({
       });
 
     return () => {
+      clearTimeout(reconciliationTimeout);
+      window.removeEventListener("offline", handleOffline);
+      window.removeEventListener("online", handleOnline);
       void supabase.removeChannel(channel);
     };
-  }, [queryClient, queryKey, supabase, taskId]);
+  }, [connectionGeneration, queryClient, queryKey, supabase, taskId]);
 
   const addMutation = useMutation({
     mutationFn: async (body: string) => {

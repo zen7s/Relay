@@ -574,6 +574,7 @@ export function KanbanBoard({
         </span>
       </div>
       <DndContext
+        id={`project-board-${context.projectId}`}
         accessibility={accessibility}
         sensors={sensors}
         collisionDetection={closestCenter}

@@ -44,6 +44,7 @@ export function useLiveProjectTasks({
   );
   const [realtimeStatus, setRealtimeStatus] =
     useState<RealtimeStatus>("connecting");
+  const [connectionGeneration, setConnectionGeneration] = useState(0);
 
   const tasksQuery = useQuery({
     queryKey,
@@ -70,8 +71,17 @@ export function useLiveProjectTasks({
   }, [initialTasks, queryClient, queryKey]);
 
   useEffect(() => {
+    let reconciliationTimeout: ReturnType<typeof setTimeout> | undefined;
+    const handleOffline = () => setRealtimeStatus("offline");
+    const handleOnline = () => {
+      setRealtimeStatus("connecting");
+      setConnectionGeneration((generation) => generation + 1);
+    };
+    window.addEventListener("offline", handleOffline);
+    window.addEventListener("online", handleOnline);
+
     const channel = supabase
-      .channel(`project-tasks:${projectId}`)
+      .channel(`project-tasks:${projectId}:${connectionGeneration}`)
       .on(
         "postgres_changes",
         {
@@ -88,6 +98,10 @@ export function useLiveProjectTasks({
         if (status === "SUBSCRIBED") {
           setRealtimeStatus("live");
           void queryClient.invalidateQueries({ queryKey });
+          clearTimeout(reconciliationTimeout);
+          reconciliationTimeout = setTimeout(() => {
+            void queryClient.invalidateQueries({ queryKey });
+          }, 5_000);
           return;
         }
         if (status === "CHANNEL_ERROR" || status === "TIMED_OUT") {
@@ -98,9 +112,12 @@ export function useLiveProjectTasks({
       });
 
     return () => {
+      clearTimeout(reconciliationTimeout);
+      window.removeEventListener("offline", handleOffline);
+      window.removeEventListener("online", handleOnline);
       void supabase.removeChannel(channel);
     };
-  }, [projectId, queryClient, queryKey, supabase]);
+  }, [connectionGeneration, projectId, queryClient, queryKey, supabase]);
 
   const moveMutation = useMutation({
     mutationFn: async (move: PreparedTaskMove) => {

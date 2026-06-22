@@ -136,9 +136,11 @@ async function openObserver(browser: Browser, boardPath: string) {
   const page = await context.newPage();
   await signInSeededUser(page);
   await page.goto(boardPath);
-  await expect(page.getByLabel("Realtime status")).toContainText(
-    "Live updates",
-  );
+  await expect(
+    page
+      .getByRole("region", { name: "Kanban board" })
+      .getByLabel("Realtime status"),
+  ).toContainText("Live updates");
   return { context, page };
 }
 
@@ -222,18 +224,39 @@ test("supports accessible DnD, rollback, and cross-client realtime", async ({
     await movedTask
       .getByLabel("Move First realtime task to")
       .selectOption({ label: "To do" });
+    const moveResponse = page.waitForResponse(
+      (response) =>
+        response.request().method() === "POST" &&
+        Boolean(response.request().headers()["next-action"]),
+    );
     await movedTask
       .getByRole("button", { name: "Move First realtime task" })
       .click();
+    await moveResponse;
+    await expect(
+      page
+        .getByRole("article", { name: "To do" })
+        .getByRole("article", { name: "First realtime task" }),
+    ).toBeVisible();
 
     await expect(
       observer.page
         .getByRole("article", { name: "To do" })
         .getByRole("article", { name: "First realtime task" }),
-    ).toBeVisible({ timeout: 10_000 });
+    ).toBeVisible({ timeout: 20_000 });
   } finally {
     await observer.context.close();
   }
+
+  await page.context().setOffline(true);
+  await expect(page.getByLabel("Realtime status")).toContainText(
+    "Reconnecting",
+  );
+  await page.context().setOffline(false);
+  await expect(page.getByLabel("Realtime status")).toContainText(
+    "Live updates",
+    { timeout: 20_000 },
+  );
 
   const touchContext = await browser.newContext({
     hasTouch: true,

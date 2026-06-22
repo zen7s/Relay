@@ -1,7 +1,7 @@
 "use client";
 
 import { useId, type ChangeEvent } from "react";
-import { Download, FileText, Paperclip, Trash2, Upload } from "lucide-react";
+import { Download, FileText, Paperclip, Trash2, Upload, X } from "lucide-react";
 
 import {
   ATTACHMENT_ACCEPT,
@@ -38,6 +38,7 @@ export function TaskAttachmentList({
     attachments,
     error,
     uploadFile,
+    cancelUpload,
     uploadProgress,
     isUploading,
     deleteAttachment,
@@ -94,9 +95,18 @@ export function TaskAttachmentList({
 
       {uploadProgress !== undefined ? (
         <div className="rounded-lg border bg-muted/40 p-3">
-          <div className="mb-2 flex justify-between text-xs">
+          <div className="mb-2 flex items-center justify-between gap-3 text-xs">
             <span>Uploading securely…</span>
-            <span>{uploadProgress}%</span>
+            <span className="ml-auto">{uploadProgress}%</span>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon-sm"
+              aria-label="Cancel attachment upload"
+              onClick={() => void cancelUpload()}
+            >
+              <X />
+            </Button>
           </div>
           <progress
             value={uploadProgress}

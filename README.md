@@ -4,7 +4,9 @@ Relay is an English-language project management SaaS for small product and creat
 
 ## Current state
 
-Stages 1–11 are implemented: the responsive application shell and workspace-isolated database now include complete authentication, multiple workspace URLs and switching, role-aware member management, secure email invitations, independent project boards, a Realtime Kanban workflow, URL-addressable task details, live comments, private file collaboration, self-service account settings, and production-oriented motion, accessibility, loading, and performance safeguards.
+Stages 1–12 are implemented. Relay now includes the complete workspace-isolated product, production hardening, monitoring hooks, analytics, encrypted backups, isolated preview data, release automation, and production smoke coverage.
+
+Production: [relay-vert-seven.vercel.app](https://relay-vert-seven.vercel.app)
 
 ## Requirements
 
@@ -34,7 +36,7 @@ Apply all migrations, seed data, and database verification gates:
 pnpm db:verify
 ```
 
-Supabase Studio is available at [http://127.0.0.1:54323](http://127.0.0.1:54323). See [database architecture](docs/database.md), [authentication setup](docs/authentication.md), [workspace/member operations](docs/workspaces.md), [project/board operations](docs/projects.md), [task/Kanban operations](docs/tasks.md), [comments/attachment operations](docs/collaboration.md), [account settings](docs/account-settings.md), and [motion/accessibility/performance checks](docs/quality.md).
+Supabase Studio is available at [http://127.0.0.1:54323](http://127.0.0.1:54323). See [database architecture](docs/database.md), [authentication setup](docs/authentication.md), [workspace/member operations](docs/workspaces.md), [project/board operations](docs/projects.md), [task/Kanban operations](docs/tasks.md), [comments/attachment operations](docs/collaboration.md), [account settings](docs/account-settings.md), [motion/accessibility/performance checks](docs/quality.md), [deployment operations](docs/deployment.md), and the [release checklist](docs/release-checklist.md).
 
 ## Quality commands
 
@@ -47,6 +49,7 @@ pnpm build         # production build
 pnpm bundle:check  # gzip client-bundle budgets; requires a build
 pnpm performance:check # Lighthouse Performance and Accessibility >= 90
 pnpm test:e2e      # browser auth and responsive tests; requires local Supabase
+PRODUCTION_URL=https://relay.example.com pnpm test:smoke:production
 pnpm check         # formatting, lint, types, and unit tests
 pnpm db:verify     # reset, lint, RLS tests, and generated-type check
 pnpm db:types      # regenerate TypeScript types after schema changes
