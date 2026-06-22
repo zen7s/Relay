@@ -5,7 +5,7 @@
       "startServerReadyPattern": "Ready in",
       "startServerReadyTimeout": 120000,
       "url": ["http://127.0.0.1:3100/login", "http://127.0.0.1:3100/signup"],
-      "numberOfRuns": 1,
+      "numberOfRuns": 3,
       "settings": {
         "chromeFlags": "--headless --no-sandbox --disable-dev-shm-usage",
         "onlyCategories": ["performance", "accessibility"]
