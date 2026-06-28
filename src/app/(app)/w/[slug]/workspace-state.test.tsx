@@ -3,7 +3,6 @@ import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
 import WorkspaceError from "./error";
-import WorkspaceLoading from "./loading";
 
 const { captureException } = vi.hoisted(() => ({
   captureException: vi.fn(),
@@ -16,14 +15,6 @@ vi.mock("@sentry/nextjs", () => ({
 }));
 
 describe("workspace route states", () => {
-  it("announces the loading skeleton", () => {
-    render(<WorkspaceLoading />);
-
-    expect(
-      screen.getByRole("status", { name: "Loading workspace" }),
-    ).toBeInTheDocument();
-  });
-
   it("records a failed load and lets the user retry", async () => {
     const error = new Error("network unavailable");
     const reset = vi.fn();

@@ -1,5 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 
+import { seededUser } from "./fixtures";
 import { signInSeededUser } from "./support/auth";
 
 async function expectNoHorizontalOverflow(page: Page) {
@@ -26,6 +27,60 @@ test("renders the responsive dashboard shell", async ({ page }) => {
   await expect(page.getByText("Priority projects")).toBeVisible();
   await expectNoHorizontalOverflow(page);
 });
+
+for (const destination of [
+  { label: "Projects", path: "projects", heading: "Projects" },
+  { label: "Members", path: "members", heading: "Members" },
+  { label: "Settings", path: "settings", heading: "Settings" },
+] as const) {
+  test(`keeps the current workspace screen visible while ${destination.label} loads`, async ({
+    page,
+  }) => {
+    let releaseNavigation!: () => void;
+    const navigationReleased = new Promise<void>((resolve) => {
+      releaseNavigation = resolve;
+    });
+    let resolveRouteRequest!: () => void;
+    const routeRequestStarted = new Promise<void>((resolve) => {
+      resolveRouteRequest = resolve;
+    });
+
+    await page.route(
+      `**/w/${seededUser.workspaceSlug}/${destination.path}**`,
+      async (route) => {
+        resolveRouteRequest();
+        await navigationReleased;
+        await route.continue();
+      },
+    );
+
+    await signInSeededUser(page);
+    await expect(
+      page.getByRole("heading", { name: "Good morning, Alex" }),
+    ).toBeVisible();
+
+    await page
+      .locator("aside")
+      .getByRole("link", { name: destination.label, exact: true })
+      .click();
+    await routeRequestStarted;
+
+    await expect(
+      page.getByRole("status", { name: "Loading workspace" }),
+    ).toHaveCount(0, { timeout: 500 });
+    await expect(
+      page.getByRole("heading", { name: "Good morning, Alex" }),
+    ).toBeVisible();
+
+    releaseNavigation();
+    await expect(page).toHaveURL(
+      `/w/${seededUser.workspaceSlug}/${destination.path}`,
+    );
+    await expect(
+      page.getByRole("heading", { name: destination.heading, exact: true }),
+    ).toBeVisible();
+  });
+}
 
 test("changes and persists the selected theme", async ({ page }) => {
   await signInSeededUser(page);
