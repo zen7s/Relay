@@ -29,6 +29,13 @@ jobs:
           node-version: 24
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      - name: Preload pg_prove image
+        run: |
+          for attempt in 1 2 3; do
+            docker pull public.ecr.aws/supabase/pg_prove:3.36 && exit 0
+            sleep $((attempt * 10))
+          done
+          docker pull public.ecr.aws/supabase/pg_prove:3.36
       - run: pnpm db:start:ci
       - run: pnpm db:verify
       - name: Link production project

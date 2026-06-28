@@ -30,8 +30,9 @@ async function expectNoAccessibilityViolations(page: Page, context: string) {
 
 test("has no critical WCAG A or AA violations on key flows", async ({
   page,
-}) => {
+}, testInfo) => {
   test.slow();
+  const projectKey = `A${testInfo.workerIndex}${testInfo.retry}Y`;
 
   await page.goto("/login");
   await expectNoAccessibilityViolations(page, "Sign in");
@@ -45,7 +46,7 @@ test("has no critical WCAG A or AA violations on key flows", async ({
   await page.getByRole("button", { name: "New project" }).first().click();
   await expectNoAccessibilityViolations(page, "Project dialog");
   await page.getByLabel("Project name").fill("Accessibility Audit");
-  await page.getByLabel("Key").fill("A11Y");
+  await page.getByLabel("Key").fill(projectKey);
   await page.getByRole("button", { name: "Create project" }).click();
   await expect(page).toHaveURL(/\/board$/);
   await expectNoAccessibilityViolations(page, "Project board");
