@@ -39,6 +39,8 @@ INVITATION_FROM_EMAIL=Relay <invites@your-domain.example>
 
 Before deployment, create a Resend account, verify the sending domain, create an API key, and add both values only to the server-side production environment. Never use a `NEXT_PUBLIC_` prefix for the API key.
 
+Relay intentionally fails server environment validation when `RESEND_API_KEY` is present without `INVITATION_FROM_EMAIL`. This prevents production from silently sending invitations through the local development sender identity.
+
 ## Verification
 
 `pnpm db:verify` covers workspace isolation, role enforcement, one-time acceptance, email matching, resend/revoke behavior, membership changes, and Owner transfer. `pnpm test:e2e` additionally covers the complete browser flow from creating a second workspace through Mailpit delivery, invited-user signup, acceptance, role change, ownership transfer, and the previous Owner leaving.

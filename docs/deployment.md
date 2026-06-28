@@ -30,7 +30,7 @@ SENTRY_PROJECT=<project-slug>
 SENTRY_AUTH_TOKEN=<source-map-upload-token>
 ```
 
-Google OAuth credentials belong in Supabase, not Vercel. `SUPABASE_SECRET_KEY`, Resend, and Sentry tokens are server-only. Vercel Analytics and Speed Insights activate automatically after deployment.
+Google OAuth credentials belong in Supabase, not Vercel. `SUPABASE_SECRET_KEY`, `RESEND_API_KEY`, and `SENTRY_AUTH_TOKEN` are server-only. Never prefix them with `NEXT_PUBLIC_`. When `RESEND_API_KEY` is set, Relay requires `INVITATION_FROM_EMAIL` to be an explicit verified Resend sender instead of falling back to the local development sender. Vercel Analytics and Speed Insights activate automatically after deployment.
 
 Connect the final domain, redeploy after environment changes, and verify `/api/health`. Relay applies CSP, clickjacking, MIME-sniffing, referrer, permissions, opener, and production HSTS headers through Next.js.
 
@@ -42,7 +42,7 @@ Each preview must pass the public login smoke, mobile reflow, and accessibility 
 
 ## 4. Monitoring and backups
 
-- Create a Sentry Next.js project, add the DSN and source-map credentials, trigger one controlled test error, and confirm the stack trace names application source files.
+- Create a Sentry Next.js project, add the public DSN plus server-only source-map credentials, trigger one controlled test error, and confirm the stack trace names application source files.
 - Keep Vercel Web Analytics and Speed Insights enabled. Review Web Vitals and error rates after every release.
 - Enable Supabase daily backups on a plan that supports them; enable point-in-time recovery when the recovery objective requires it. The current free-tier fallback is `.github/workflows/backup-database.yml`: it creates a daily logical dump, encrypts it with the production environment key before upload, and retains the private artifact for 30 days.
 - Quarterly, restore the newest backup into a temporary project and record the recovery time. A backup that has never been restored is only a theory.

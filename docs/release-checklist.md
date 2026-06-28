@@ -12,7 +12,7 @@
 ## Production configuration
 
 - [ ] Final domain, Supabase Auth Site URL, callback allow-list, and Google callback agree exactly.
-- [ ] Production SMTP/Resend sender is verified.
+- [ ] Production Resend domain and `INVITATION_FROM_EMAIL` sender are verified.
 - [ ] Vercel public and server-only environment variables are scoped correctly.
 - [ ] Sentry receives errors with readable source maps and no unnecessary personal data.
 - [ ] Vercel Analytics and Speed Insights are receiving production traffic.
